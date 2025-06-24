@@ -1,0 +1,16 @@
+
+version: "3.9"
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.9.1
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+  guardrail:
+    build: .
+    depends_on:
+      - qdrant
+    ports:
+      - "8000:8000"
+    environment:
+      - qdrant_host=qdrant

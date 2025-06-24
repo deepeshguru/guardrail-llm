@@ -1,0 +1,12 @@
+digraph class_diagram {
+    rankdir=TB; node [shape=record, fontname=Helvetica];
+
+    IngressRouter [label="{IngressRouter|+ settings: Settings\\l+ middleware(): None\\l}"];
+    RuleFilter    [label="{RuleFilter|+ patterns: list\\l+ is_match(): bool\\l}"];
+    SemanticFilter[label="{SemanticFilter|+ model: SBERT\\l+ qdrant: Client\\l+ is_match(): bool\\l}"];
+    DecisionEngine[label="{DecisionEngine|+ evaluate(): Verdict\\l}"];
+
+    IngressRouter -> RuleFilter
+    RuleFilter -> SemanticFilter
+    SemanticFilter -> DecisionEngine
+}

@@ -1,0 +1,13 @@
+digraph guardrail_arch {
+    rankdir=LR; node [shape=box, style=rounded, fontname=Helvetica];
+    Client -> "Ingress Router";
+    "Ingress Router" -> "Rule Filter";
+    "Rule Filter" -> "Semantic Filter";
+    "Semantic Filter" -> "Policy LLM";
+    "Policy LLM" -> "Decision Engine";
+    "Decision Engine" -> "Upstream LLM";
+    // side channels
+    "Semantic Filter" -> Qdrant [label=" vector query ", style=dashed];
+    "Audit Logger" [shape=tab];
+    "Decision Engine" -> "Audit Logger" [style=dotted];
+}

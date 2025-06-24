@@ -1,0 +1,12 @@
+# Common jailbreak triggers (case-insensitive unless ^ or $ used)
+
+- (?i)\bignore\b.+\bprevious\b.+\b(?:instructions|directives?)\b
+- (?i)\bdisregard\b.+\bsafety\b
+- (?i)\b(build|create|manufacture)\b.+\b(bomb|explosive|weapon)\b
+- (?i)\badmin(?:istrator)?\s+password\b
+- (?i)\bprivate\s+(?:ssh|api)?\s*key\b
+- (?i)\bhow\s+to\s+make\s+napalm\b
+- (?i)\benable\b.+\bdeveloper\s+mode\b
+- (?i)\bself-harm\b|\bkill\s+myself\b
+- (?i)\bnsfw\b|\bexplicit\s+content\b
+- (?i)system\s+message:\s*.+\bend\b
