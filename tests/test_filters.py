@@ -13,3 +13,7 @@ def test_semantic_filter():
     prompts = [p.strip() for p in corpus_path.read_text().splitlines() if p.strip()]
     bootstrap(prompts)
     assert is_prompt_injection_semantic(prompts[0]) is True
+
+def test_whitelist_override():
+    from guardrail_midsem.app.filters.filter_semantic import is_prompt_injection_semantic
+    assert is_prompt_injection_semantic("Please write an email to HR") is False

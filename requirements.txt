@@ -5,3 +5,4 @@ qdrant-client
 pydantic
 datasets
 pyyaml
+matplotlib

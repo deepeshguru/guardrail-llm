@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Runtime artefacts
+logs/
+results/
+*.log
+
+# Data you might regenerate
+datasets/*.jsonl
+
