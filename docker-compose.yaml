@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  # ──────────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:v1.9.1
+    restart: unless-stopped
+    ports:
+      - "6333:6333"   # REST / gRPC
+    volumes:
+      - qdrant_data:/qdrant/storage   # persisted vectors
+
+  # ──────────────────────────────────
+  policy-llm:        # TinyLlama via llama.cpp in CPU-only mode
+    image: ghcr.io/ggerganov/llama.cpp:latest
+    command: >-
+      --model /models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
+      --port 8080 --api             # exposes /v1/chat/completions
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./models:/models            # put GGUF model here (~640 MB)
+
+  # ──────────────────────────────────
+  guardrail:
+    build: .
+    depends_on:
+      - qdrant
+      - policy-llm
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # vector DB
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: 6333
+      # policy server
+      POLICY_LLM_ENDPOINT: http://policy-llm:8080/v1/chat/completions
+      # upstream LLM (echo stub by default)
+      LLM_BACKEND_URL: http://example.com/v1/chat/completions
+    volumes:
+      - ./config:/app/config         # hot-reload YAMLs if you edit locally
+      - logs:/app/logs
+
+volumes:
+  qdrant_data:
+  logs:

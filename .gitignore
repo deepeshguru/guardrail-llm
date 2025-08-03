@@ -1,13 +1,68 @@
-# Python
+#######################################
+#  Python byte-code / build artefacts  #
+#######################################
 __pycache__/
 *.py[cod]
+*.so
 *.pyd
+*.egg
+*.egg-info/
+dist/
+build/
 
-# Runtime artefacts
+#######################
+#  Editor junk files  #
+#######################
+*.swp
+*.swo
+*.DS_Store
+.idea/
+.vscode/
+
+############################
+#  Virtual-env / secrets   #
+############################
+.venv/
+venv/
+.env           # runtime env-vars
+*.env          # any other .env.* files
+
+############################
+#  Logs & runtime output   #
+############################
 logs/
-results/
 *.log
 
-# Data you might regenerate
-datasets/*.jsonl
+################################
+#  Evaluation / result files   #
+################################
+results/
+datasets/*.jsonl    # regenerated benign set
+*.jsonl             # any ad-hoc streaming dumps
 
+##################################
+#  Model and data heavy assets   #
+##################################
+*.gguf              # llama.cpp models
+models/
+qdrant_data/        # optional mounted volume
+
+########################
+#  Generated figures   #
+########################
+figures/*.png
+diagrams/*.png
+
+########################
+#  Test artefacts      #
+########################
+.coverage
+htmlcov/
+.pytest_cache/
+
+##################################
+#  Node / front-end artefacts    #
+##################################
+node_modules/
+
+# End of .gitignore

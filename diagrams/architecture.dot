@@ -1,13 +1,21 @@
 digraph guardrail_arch {
-    rankdir=LR; node [shape=box, style=rounded, fontname=Helvetica];
+    rankdir=LR;
+    node [shape=box, style=rounded, fontname=Helvetica];
+
     Client -> "Ingress Router";
+
     "Ingress Router" -> "Rule Filter";
     "Rule Filter" -> "Semantic Filter";
     "Semantic Filter" -> "Policy LLM";
-    "Policy LLM" -> "Decision Engine";
-    "Decision Engine" -> "Upstream LLM";
+    "Policy LLM" -> "URCF (Role-Aware Gate)";
+    "URCF (Role-Aware Gate)" -> "Upstream LLM\n(OpenAI / llama.cpp)";
+
     // side channels
-    "Semantic Filter" -> Qdrant [label=" vector query ", style=dashed];
+    "Semantic Filter" -> Qdrant [label="vector search", style=dashed];
+
     "Audit Logger" [shape=tab];
-    "Decision Engine" -> "Audit Logger" [style=dotted];
+    "Rule Filter"       -> "Audit Logger" [style=dotted];
+    "Semantic Filter"   -> "Audit Logger" [style=dotted];
+    "Policy LLM"        -> "Audit Logger" [style=dotted];
+    "URCF (Role-Aware Gate)" -> "Audit Logger" [style=dotted];
 }

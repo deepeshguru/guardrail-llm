@@ -1,12 +1,22 @@
 digraph class_diagram {
-    rankdir=TB; node [shape=record, fontname=Helvetica];
+    rankdir=TB;
+    node [shape=record, fontname=Helvetica];
 
-    IngressRouter [label="{IngressRouter|+ settings: Settings\\l+ middleware(): None\\l}"];
-    RuleFilter    [label="{RuleFilter|+ patterns: list\\l+ is_match(): bool\\l}"];
-    SemanticFilter[label="{SemanticFilter|+ model: SBERT\\l+ qdrant: Client\\l+ is_match(): bool\\l}"];
-    DecisionEngine[label="{DecisionEngine|+ evaluate(): Verdict\\l}"];
+    Settings      [label="{Settings|+ qdrant_host: str\\l+ policy_llm_endpoint: str\\l...}"];
+    IngressRouter [label="{IngressRouter|+ dispatch(): Response\\l}"];
+
+    RuleFilter    [label="{RuleFilter|+ patterns: dict\\l+ is_blocked(): bool\\l}"];
+    SemanticFilter[label="{SemanticFilter|+ model: SBERT\\l+ is_blocked(): bool\\l}"];
+    PolicyLLM     [label="{PolicyLLM|+ endpoint: str\\l+ is_blocked(): bool\\l}"];
+    URCF          [label="{URCF|+ role_cfg: dict\\l+ allow(): bool\\l}"];
+
+    UserRoleContext [label="{UserRoleContext|+ get_user_role(): str\\l+ role_cfg(): dict\\l}"];
+    AuditLogger     [label="{AuditLogger|+ write_audit(): None\\l}"];
 
     IngressRouter -> RuleFilter
     RuleFilter -> SemanticFilter
-    SemanticFilter -> DecisionEngine
+    SemanticFilter -> PolicyLLM
+    PolicyLLM -> URCF
+    UserRoleContext -> URCF
+    URCF -> AuditLogger
 }

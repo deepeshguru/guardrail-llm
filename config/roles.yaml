@@ -1,0 +1,13 @@
+guest:
+  semantic_threshold_delta: 0.00    # strict baseline
+  allow_policy_override: false      # cannot bypass UNSAFE
+
+employee:
+  semantic_threshold_delta: -0.02   # slightly stricter
+  allow_policy_override: false
+
+admin:
+  semantic_threshold_delta: +0.05   # more lenient
+  allow_policy_override: true
+
+# Add / adjust roles as needed.
