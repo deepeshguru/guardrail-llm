@@ -21,6 +21,10 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: Dict   # passthrough backend JSON
 
+# --- echo upstream stub ---
+def call_upstream_llm(prompt: str) -> str:
+    return f"Echo: {prompt}"
+
 @app.get("/", include_in_schema=False)
 def root():
     return {"status": "ok", "docs": "/docs"}
@@ -40,14 +44,15 @@ async def chat(request: Request, req: ChatRequest):
             status_code=403,
             detail={"error": "Prompt blocked", **verdict},
         )
-    print("req.dict():", req.dict())
-    async with httpx.AsyncClient(timeout=60) as client:
-        resp = await client.post(BACKEND, json=req.dict(), timeout=30.0)
-        resp.raise_for_status()
-        data = resp.json()
 
-    log({
-        **verdict, "prompt": prompt, "response": data,
-        "latency_ms": latency_ms,
-    })
-    return ChatResponse(response=data)
+    upstream_resp = call_upstream_llm(prompt)
+    log(
+        {
+            'prompt': prompt,
+            'response': upstream_resp,
+            'verdict': verdict,
+            "latency_ms": latency_ms,
+            }
+        )
+
+    return ChatResponse(response={"content": upstream_resp})

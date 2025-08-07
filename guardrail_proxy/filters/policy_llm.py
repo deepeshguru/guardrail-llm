@@ -22,6 +22,14 @@ from importlib.resources import files
 import yaml
 from pathlib import Path
 
+from llama_cpp import Llama
+
+model = Llama.from_pretrained(
+	repo_id="TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF",
+	filename="tinyllama-1.1b-chat-v1.0.Q2_K.gguf",
+)
+
+
 @lru_cache(maxsize=1)
 def _default_prompt_header() -> str:
     yaml_path = Path(__file__).resolve().parents[2] / "config" / "policy.yaml"
@@ -41,34 +49,36 @@ class PolicyLLM:
 
     def __init__(
         self,
-        endpoint: str = "http://127.0.0.1:8080/v1/chat/completions",
-        model: str = "tinyllama-policy",
         temperature: float = 0.0,
         timeout: int = 30,
     ) -> None:
-        self.endpoint = endpoint
-        self.model = model
         self.temperature = temperature
         self.timeout = timeout
 
     def _query_model(self, prompt: str) -> str:
-        payload = {
-            "model": self.model,
-            "messages": [
+        # payload = {
+        #     "model": model,
+        #     "messages": [
+        #         {"role": "system", "content": _default_prompt_header()},
+        #         {"role": "user", "content": prompt},
+        #     ],
+        #     "temperature": self.temperature,
+        #     "max_tokens": 1,
+        # }
+        # try:
+        response = model.create_chat_completion(
+            messages= [
                 {"role": "system", "content": _default_prompt_header()},
                 {"role": "user", "content": prompt},
-            ],
-            "temperature": self.temperature,
-            "max_tokens": 1,
-        }
-        # try:
-        r = httpx.post(self.endpoint, json=payload, timeout=self.timeout)
-        r.raise_for_status()
-        text = r.json()["choices"][0]["message"]["content"].strip().upper()
-        #     return text
-        # except Exception as exc:  # noqa: BLE001
-        #     logger.warning("Policy-LLM fallback to FAIL-CLOSE: %s", exc)
-        #     return self.BLOCK  # fail-close
+                ],
+            max_tokens=1,
+            temperature=self.temperature,
+            )
+        text = response["choices"][0]["message"]["content"].strip().upper()
+        return text
+        # except Exception as exc:
+        #     logger.warning("PolicyLLM fallback to FAIL-CLOSE: %s", exc)
+        #     return self.BLOCK
 
     # --------------------------------------------------------------------- #
     # public API                                                             #
